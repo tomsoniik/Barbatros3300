@@ -11,7 +11,7 @@ type Stats = {
 };
 
 function App() {
-  const [target, setTarget] = useState('https://192.168.1.100');
+  const [target, setTarget] = useState('http://192.168.1.100');
   const [connections, setConnections] = useState(10);
   const [duration, setDuration] = useState(30);
   const [agentCount, setAgentCount] = useState(0);
@@ -121,7 +121,7 @@ function App() {
           <h2>Configuration</h2>
           
           <div className="input-group">
-            <label>Target URL (HTTPS IPv4 Required)</label>
+            <label>Target URL (HTTP/HTTPS IPv4)</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.2)', padding: '0 12px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
               <Globe size={18} color="var(--text-secondary)" />
               <input 

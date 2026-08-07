@@ -4,24 +4,26 @@ import https from 'https';
 export async function verifyTarget(targetUrl: string): Promise<boolean> {
   try {
     const url = new URL(targetUrl);
-    // Force HTTPS
-    if (url.protocol !== 'https:') {
-      throw new Error('Only HTTPS targets are allowed.');
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+      throw new Error('Only HTTP/HTTPS targets are allowed.');
     }
 
     const verifyUrl = `${url.origin}/.well-known/stress-tester.txt`;
     
-    const agent = new https.Agent({
-      rejectUnauthorized: false // Allow self-signed certs for testing environments
-    });
-
-    const response = await axios.get(verifyUrl, {
-      httpsAgent: agent,
+    const requestConfig: any = {
       timeout: 5000,
       headers: {
          'User-Agent': 'Stress-Tester-Agent'
       }
-    });
+    };
+
+    if (url.protocol === 'https:') {
+      requestConfig.httpsAgent = new https.Agent({
+        rejectUnauthorized: false
+      });
+    }
+
+    const response = await axios.get(verifyUrl, requestConfig);
 
     if (response.status === 200) {
       return true;
