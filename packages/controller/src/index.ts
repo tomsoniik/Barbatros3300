@@ -63,10 +63,14 @@ wss.on('connection', (ws, req) => {
             return;
           }
 
+          if (!/^https?:\/\//i.test(data.target)) {
+            data.target = `http://${data.target}`;
+          }
+
           console.log(`Verifying target: ${data.target}`);
           const isVerified = await verifyTarget(data.target);
           if (!isVerified) {
-            ws.send(JSON.stringify({ type: 'ERROR', message: `Target verification failed. Ensure /.well-known/stress-tester.txt exists on ${data.target} and it uses HTTPS.` }));
+            ws.send(JSON.stringify({ type: 'ERROR', message: `Target verification failed. Ensure /.well-known/stress-tester.txt exists on ${data.target}` }));
             return;
           }
 

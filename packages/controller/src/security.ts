@@ -3,6 +3,9 @@ import https from 'https';
 
 export async function verifyTarget(targetUrl: string): Promise<boolean> {
   try {
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      targetUrl = `http://${targetUrl}`;
+    }
     const url = new URL(targetUrl);
     if (url.protocol !== 'https:' && url.protocol !== 'http:') {
       throw new Error('Only HTTP/HTTPS targets are allowed.');
