@@ -1,0 +1,17 @@
+{
+  "name": "stress-tester-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:controller": "npm run dev --workspace=@stress-tester/controller",
+    "dev:agent": "npm run dev --workspace=@stress-tester/agent",
+    "dev:ui": "npm run dev --workspace=@stress-tester/ui",
+    "build": "npm run build --workspaces"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

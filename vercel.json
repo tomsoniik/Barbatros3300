@@ -1,0 +1,5 @@
+{
+  "version": 2,
+  "buildCommand": "cd packages/ui && npm run build",
+  "outputDirectory": "packages/ui/dist"
+}
