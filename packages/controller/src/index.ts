@@ -22,9 +22,9 @@ wss.on('connection', (ws, req) => {
   const isAgent = req.url?.includes('/agent');
   const isUI = req.url?.includes('/ui');
 
-  if (isAgent) {
+    if (isAgent) {
     agents.add(ws);
-    broadcastToUI({ type: 'AGENT_COUNT', count: agents.size + toxAgentsCount });
+    broadcastToUI({ type: 'AGENT_COUNT', local: agents.size, tox: toxAgentsCount });
     console.log(`Agent connected. Total: ${agents.size}`);
 
     ws.on('message', (message) => {
@@ -41,12 +41,12 @@ wss.on('connection', (ws, req) => {
 
     ws.on('close', () => {
       agents.delete(ws);
-      broadcastToUI({ type: 'AGENT_COUNT', count: agents.size + toxAgentsCount });
+      broadcastToUI({ type: 'AGENT_COUNT', local: agents.size, tox: toxAgentsCount });
       console.log(`Agent disconnected. Total: ${agents.size}`);
     });
   } else if (isUI) {
     uis.add(ws);
-    ws.send(JSON.stringify({ type: 'AGENT_COUNT', count: agents.size + toxAgentsCount }));
+    ws.send(JSON.stringify({ type: 'AGENT_COUNT', local: agents.size, tox: toxAgentsCount }));
     console.log('UI connected.');
 
     ws.on('message', async (message) => {
@@ -58,8 +58,8 @@ wss.on('connection', (ws, req) => {
             ws.send(JSON.stringify({ type: 'ERROR', message: 'Test is already running' }));
             return;
           }
-          if (agents.size === 0) {
-            ws.send(JSON.stringify({ type: 'ERROR', message: 'No agents connected' }));
+          if (agents.size === 0 && toxAgentsCount === 0) {
+            ws.send(JSON.stringify({ type: 'ERROR', message: 'No agents or bots connected' }));
             return;
           }
 
@@ -145,7 +145,7 @@ setInterval(() => {
         const parsed = JSON.parse(data);
         if (toxAgentsCount !== parsed.count) {
           toxAgentsCount = parsed.count;
-          broadcastToUI({ type: 'AGENT_COUNT', count: agents.size + toxAgentsCount });
+          broadcastToUI({ type: 'AGENT_COUNT', local: agents.size, tox: toxAgentsCount });
         }
       } catch (err) {}
     });
@@ -153,11 +153,11 @@ setInterval(() => {
   req.on('error', () => {
     if (toxAgentsCount !== 0) {
       toxAgentsCount = 0;
-      broadcastToUI({ type: 'AGENT_COUNT', count: agents.size + toxAgentsCount });
+      broadcastToUI({ type: 'AGENT_COUNT', local: agents.size, tox: toxAgentsCount });
     }
   });
   req.end();
-}, 5000);
+}, 2000);
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {

@@ -14,7 +14,8 @@ function App() {
   const [target, setTarget] = useState('http://192.168.1.100');
   const [connections, setConnections] = useState(10);
   const [duration, setDuration] = useState(30);
-  const [agentCount, setAgentCount] = useState(0);
+  const [localAgentCount, setLocalAgentCount] = useState(0);
+  const [toxAgentCount, setToxAgentCount] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -37,7 +38,8 @@ function App() {
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'AGENT_COUNT') {
-          setAgentCount(data.count);
+          setLocalAgentCount(data.local || 0);
+          setToxAgentCount(data.tox || 0);
         } else if (data.type === 'TEST_STARTED') {
           setIsRunning(true);
           setErrorMsg(null);
@@ -91,6 +93,7 @@ function App() {
   }, [ws]);
 
   const currentStats = statsHistory.length > 0 ? statsHistory[statsHistory.length - 1] : null;
+  const totalAgents = localAgentCount + toxAgentCount;
 
   return (
     <div className="container">
@@ -161,7 +164,7 @@ function App() {
 
           <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
             {!isRunning ? (
-              <button className="btn btn-primary" onClick={startTest} disabled={!ws || agentCount === 0} style={{ flex: 1 }}>
+              <button className="btn btn-primary" onClick={startTest} disabled={!ws || totalAgents === 0} style={{ flex: 1 }}>
                 <Play size={20} /> Start Test
               </button>
             ) : (
@@ -185,9 +188,13 @@ function App() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-                <Server size={18} /> Active Agents
+                <Server size={18} /> Agents (Local / Tox)
               </div>
-              <div className="stats-value">{agentCount}</div>
+              <div className="stats-value">
+                <span style={{ color: 'var(--text-primary)' }}>{localAgentCount}</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: '0 8px' }}>/</span>
+                <span style={{ color: '#00ff88' }}>{toxAgentCount}</span>
+              </div>
             </div>
 
             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
