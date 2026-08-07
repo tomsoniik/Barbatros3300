@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "installCommand": "npm install --include=dev",
   "buildCommand": "npm run build --workspace=@stress-tester/ui",
   "outputDirectory": "packages/ui/dist"
 }

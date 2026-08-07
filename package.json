@@ -11,7 +11,9 @@
     "dev:ui": "npm run dev --workspace=@stress-tester/ui",
     "build": "npm run build --workspaces"
   },
-  "devDependencies": {
+  "dependencies": {
+    "vite": "^8.2.0",
     "typescript": "^5.4.5"
-  }
+  },
+  "devDependencies": {}
 }
